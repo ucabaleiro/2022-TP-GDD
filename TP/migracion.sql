@@ -31,15 +31,6 @@ CREATE TABLE [dbo].[Sector] (
 )
 GO
 
-CREATE TABLE [dbo].[Incidente] (
-    [codigo_incidente][int] NOT NULL IDENTITY PRIMARY KEY,
-    [codigo_sector][int] NOT NULL FOREIGN KEY REFERENCES [dbo].[Sector] ([codigo_sector]),
-    [bandera_incidente][nvarchar(255)] NOT NULL,
-    [tipo_incidente][nvarchar(255)] NOT NULL,
-    [tiempo_incidente][decimal(18,2)] NOT NULL,
-)
-GO
-
 CREATE TABLE [dbo].[Escuderia] (
     [codigo_escuderia][int] NOT NULL IDENTITY PRIMARY KEY,
     [nombre_escuderia][nvarchar(255)] NOT NULL,
@@ -55,11 +46,14 @@ CREATE TABLE [dbo].[Auto] (
 )
 GO
 
-CREATE TABLE [dbo].[Auto_Incidente] (
-    [codigo_incidente][int] NOT NULL,
-    [codigo_auto][int] NOT NULL,
-    [numero_vuelta][decimal(18,0)] NOT NULL,
-    CONSTRAINT PK_Auto_Incidente PRIMARY KEY ([codigo_incidente], [codigo_auto])
+CREATE TABLE [dbo].[Incidente] (
+    [codigo_incidente][int] NOT NULL IDENTITY PRIMARY KEY,
+    [codigo_sector][int] NOT NULL FOREIGN KEY REFERENCES [dbo].[Sector] ([codigo_sector]),
+    [codigo_auto][int] NOT NULL FOREIGN KEY REFERENCES [dbo].[Auto],
+    [bandera_incidente][nvarchar(255)] NOT NULL,
+    [tipo_incidente][nvarchar(255)] NOT NULL,
+    [tiempo_incidente][decimal(18,2)] NOT NULL,
+    [numero_vuelta][decimal(18,0)] NOT NULL
 )
 GO
 
@@ -89,17 +83,21 @@ CREATE TABLE [dbo].[Telemetria_Neumatico] (
 )
 GO
 
+CREATE TABLE [dbo].[Cambio_Neumatico] (
+    [codigo_cambio_neumatico][int] NOT NULL IDENTITY PRIMARY KEY,
+    [num_serie_viejo][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
+    [num_serie_nuevo][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
+    [posicion][nvarchar(255)] NOT NULL
+)
+GO
+
 CREATE TABLE [dbo].[Parada_Box] (
     [codigo_parada_box][int] NOT NULL IDENTITY PRIMARY KEY,
     [codigo_auto][int] NOT NULL FOREIGN KEY REFERENCES [dbo].[Auto] ([codigo_auto]),
-    [num_serie_viejo1][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
-    [num_serie_nuevo1][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
-    [num_serie_viejo2][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
-    [num_serie_nuevo2][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
-    [num_serie_viejo3][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
-    [num_serie_nuevo3][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
-    [num_serie_viejo4][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
-    [num_serie_nuevo4][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
+    [codigo_cambio_neumatico1][int] NOT NULL FOREIGN KEY REFERENCES [dbo].[Cambio_Neumatico] ([codigo_cambio_neumatico]),
+    [codigo_cambio_neumatico2][int] NOT NULL FOREIGN KEY REFERENCES [dbo].[Cambio_Neumatico] ([codigo_cambio_neumatico]),
+    [codigo_cambio_neumatico3][int] NOT NULL FOREIGN KEY REFERENCES [dbo].[Cambio_Neumatico] ([codigo_cambio_neumatico]),
+    [codigo_cambio_neumatico4][int] NOT NULL FOREIGN KEY REFERENCES [dbo].[Cambio_Neumatico] ([codigo_cambio_neumatico]),
     [codigo_carrera][int] NOT NULL FOREIGN KEY REFERENCES [dbo].[Carrera] ([codigo_carrera]),
     [numero_vuelta_box][decimal(18,0)] NOT NULL,
     [tiempo_parada_box][decimal(18,2)] NOT NULL
@@ -175,3 +173,28 @@ CREATE TABLE [dbo].[Telemetria_Auto] (
     [combustible_auto][decimal(18,2)] NOT NULL
 )
 GO
+
+/* FIN CREACION TABLAS */
+
+/* COMIENZO CARGA DE DATOS */
+
+
+
+
+-- Motor
+INSERT INTO [dbo].[Motor]
+    SELECT TELE_MOTOR_NRO_SERIE, TELE_MOTOR_MODELO
+    FROM [gd_esquema].[Maestra]
+    WHERE TELE_MOTOR_NRO_SERIE IS NOT NULL 
+        AND TELE_MOTOR_MODELO IS NOT NULL
+    GROUP BY TELE_MOTOR_NRO_SERIE, TELE_MOTOR_MODELO
+
+-- Caja
+
+-- Neumatico
+
+-- Escuderia
+
+-- Circuito
+
+-- Freno
