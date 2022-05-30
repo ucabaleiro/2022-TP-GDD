@@ -89,20 +89,17 @@ CREATE TABLE [dbo].[Telemetria_Neumatico] (
 )
 GO
 
-CREATE TABLE [dbo].[Cambio_Neumatico] (
-    [codigo_cambio_neumatico][int] NOT NULL IDENTITY PRIMARY KEY,
-    [num_serie_viejo][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
-    [num_serie_viejo][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico])
-)
-GO
-
 CREATE TABLE [dbo].[Parada_Box] (
     [codigo_parada_box][int] NOT NULL IDENTITY PRIMARY KEY,
     [codigo_auto][int] NOT NULL FOREIGN KEY REFERENCES [dbo].[Auto] ([codigo_auto]),
-    [codigo_cambio_neumatico1][int] NOT NULL FOREIGN KEY REFERENCES [dbo].[Cambio_Neumatico] ([codigo_cambio_neumatico]),
-    [codigo_cambio_neumatico2][int] NOT NULL FOREIGN KEY REFERENCES [dbo].[Cambio_Neumatico] ([codigo_cambio_neumatico]),
-    [codigo_cambio_neumatico3][int] NOT NULL FOREIGN KEY REFERENCES [dbo].[Cambio_Neumatico] ([codigo_cambio_neumatico]),
-    [codigo_cambio_neumatico4][int] NOT NULL FOREIGN KEY REFERENCES [dbo].[Cambio_Neumatico] ([codigo_cambio_neumatico]),
+    [num_serie_viejo1][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
+    [num_serie_nuevo1][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
+    [num_serie_viejo2][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
+    [num_serie_nuevo2][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
+    [num_serie_viejo3][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
+    [num_serie_nuevo3][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
+    [num_serie_viejo4][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
+    [num_serie_nuevo4][nvarchar(255)] NOT NULL FOREIGN KEY REFERENCES [dbo].[Neumatico] ([num_serie_neumatico]),
     [codigo_carrera][int] NOT NULL FOREIGN KEY REFERENCES [dbo].[Carrera] ([codigo_carrera]),
     [numero_vuelta_box][decimal(18,0)] NOT NULL,
     [tiempo_parada_box][decimal(18,2)] NOT NULL
