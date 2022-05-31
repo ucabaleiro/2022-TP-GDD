@@ -7,6 +7,81 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+/* Comienzo Drops de las tablas */
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Carrera]') AND type in (N'U'))
+DROP TABLE [dbo].[Carrera]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Circuito]') AND type in (N'U'))
+DROP TABLE [dbo].[Circuito]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Sector]') AND type in (N'U'))
+DROP TABLE [dbo].[Sector]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Escuderia]') AND type in (N'U'))
+DROP TABLE [dbo].[Escuderia]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Auto]') AND type in (N'U'))
+DROP TABLE [dbo].[Auto]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Incidente]') AND type in (N'U'))
+DROP TABLE [dbo].[Incidente]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Piloto]') AND type in (N'U'))
+DROP TABLE [dbo].[Piloto]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Neumatico]') AND type in (N'U'))
+DROP TABLE [dbo].[Neumatico]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Telemetria_Neumatico]') AND type in (N'U'))
+DROP TABLE [dbo].[Telemetria_Neumatico]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Cambio_Neumatico]') AND type in (N'U'))
+DROP TABLE [dbo].[Cambio_Neumatico]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Parada_Box]') AND type in (N'U'))
+DROP TABLE [dbo].[Parada_Box]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Motor]') AND type in (N'U'))
+DROP TABLE [dbo].[Motor]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Telemetria_Motor]') AND type in (N'U'))
+DROP TABLE [dbo].[Telemetria_Motor]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Freno]') AND type in (N'U'))
+DROP TABLE [dbo].[Freno]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Telemetria_Freno]') AND type in (N'U'))
+DROP TABLE [dbo].[Telemetria_Freno]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Caja]') AND type in (N'U'))
+DROP TABLE [dbo].[Caja]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Telemetria_Caja]') AND type in (N'U'))
+DROP TABLE [dbo].[Telemetria_Caja]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Telemetria_Auto]') AND type in (N'U'))
+DROP TABLE [dbo].[Telemetria_Auto]
+GO
+/* Fin Drops de las tablas */
+
+/*Comienzo Creates de las tablas*/
 CREATE TABLE [dbo].[Carrera] (
     [codigo_carrera] int NOT NULL IDENTITY PRIMARY KEY,
     [fecha_carrera] date NOT NULL,
@@ -173,11 +248,9 @@ CREATE TABLE [dbo].[Telemetria_Auto] (
     [combustible_auto] decimal(18,2) NOT NULL
 )
 GO
-
 /* FIN CREACION TABLAS */
 
 /* COMIENZO CARGA DE DATOS */
-
 -- Motor
 INSERT INTO [dbo].[Motor] ([num_serie_motor], [modelo_motor])
 SELECT DISTINCT TELE_MOTOR_NRO_SERIE, TELE_MOTOR_MODELO
@@ -264,3 +337,5 @@ GO
 -- Circuito
 
 -- Freno
+
+/* Fin Inserts */
