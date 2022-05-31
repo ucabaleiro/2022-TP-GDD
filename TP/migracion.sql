@@ -178,24 +178,61 @@ GO
 
 /* COMIENZO CARGA DE DATOS */
 
-
-
-
 -- Motor
-INSERT INTO [dbo].[Motor]
-    SELECT TELE_MOTOR_NRO_SERIE, TELE_MOTOR_MODELO
-    FROM [gd_esquema].[Maestra]
-    WHERE TELE_MOTOR_NRO_SERIE IS NOT NULL 
-        AND TELE_MOTOR_MODELO IS NOT NULL
-    GROUP BY TELE_MOTOR_NRO_SERIE, TELE_MOTOR_MODELO
+INSERT INTO [dbo].[Motor] ([num_serie_motor], [modelo_motor])
+SELECT DISTINCT TELE_MOTOR_NRO_SERIE, TELE_MOTOR_MODELO
+FROM [gd_esquema].[Maestra]
+WHERE   TELE_MOTOR_NRO_SERIE IS NOT NULL 
+    AND TELE_MOTOR_MODELO IS NOT NULL
+GROUP BY TELE_MOTOR_NRO_SERIE, TELE_MOTOR_MODELO
+GO
 
--- TELEMETRIA MOTOR
+-- Telemetria Motor
+INSERT INTO [dbo].[Telemetria_Motor]
+(
+    [num_serie_motor],
+    [potencia_motor],
+    [rpm_motor],
+    [temp_aceite_motor],
+    [temp_agua_motor]
+)
+SELECT  TELE_MOTOR_NRO_SERIE, 
+        TELE_MOTOR_POTENCIA, 
+        TELE_MOTOR_RPM, 
+        TELE_MOTOR_TEMP_ACEITE, 
+        TELE_MOTOR_TEMP_AGUA
+FROM [gd_esquema].[Maestra]
+WHERE   TELE_MOTOR_NRO_SERIE IS NOT NULL 
+    AND TELE_MOTOR_POTENCIA IS NOT NULL
+    AND TELE_MOTOR_RPM IS NOT NULL
+    AND TELE_MOTOR_TEMP_ACEITE IS NOT NULL
+    AND TELE_MOTOR_TEMP_AGUA IS NOT NULL
+GROUP BY TELE_MOTOR_NRO_SERIE, 
+        TELE_MOTOR_POTENCIA, 
+        TELE_MOTOR_RPM, 
+        TELE_MOTOR_TEMP_ACEITE, 
+        TELE_MOTOR_TEMP_AGUA
+GO
 
 -- Caja
 
 -- Neumatico
 
 -- Escuderia
+INSERT INTO [dbo].[Escuderia] ([nombre_escuderia], [nacionalidad_escuderia])
+SELECT DISTINCT ESCUDERIA_NOMBRE, ESCUDERIA_NACIONALIDAD
+FROM [gd_esquema].[Maestra]
+WHERE   ESCUDERIA_NOMBRE IS NOT NULL 
+    AND ESCUDERIA_NACIONALIDAD IS NOT NULL
+GROUP BY ESCUDERIA_NOMBRE, 
+        ESCUDERIA_NACIONALIDAD
+GO
+
+-- Auto
+
+
+-- Piloto
+
 
 -- Circuito
 
