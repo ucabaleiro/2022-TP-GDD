@@ -235,9 +235,31 @@ FROM gd_esquema.Maestra LEFT JOIN dbo.Escuderia E ON
 E.nacionalidad_escuderia = ESCUDERIA_NACIONALIDAD AND E.nombre_escuderia = ESCUDERIA_NOMBRE
 WHERE AUTO_MODELO IS NOT NULL AND AUTO_NUMERO IS NOT NULL
 GROUP BY E.codigo_escuderia, AUTO_MODELO, AUTO_NUMERO
+GO
 
 -- Piloto
-
+INSERT INTO [dbo].[Piloto] 
+(
+    [codigo_auto],
+    [nombre_piloto],
+    [apellido_piloto],
+    [nacionalidad_piloto],
+    [nacimiento_piloto]
+)
+SELECT DISTINCT
+    A.codigo_auto,
+    PILOTO_NOMBRE,
+    PILOTO_APELLIDO,
+    PILOTO_NACIONALIDAD,
+    PILOTO_FECHA_NACIMIENTO
+FROM gd_esquema.Maestra LEFT JOIN dbo.Auto A ON
+    A.modelo_auto = AUTO_MODELO AND A.numero_auto = AUTO_NUMERO
+WHERE PILOTO_NOMBRE IS NOT NULL 
+AND PILOTO_APELLIDO IS NOT NULL
+AND PILOTO_NACIONALIDAD IS NOT NULL
+AND PILOTO_FECHA_NACIMIENTO IS NOT NULL
+GROUP BY A.codigo_auto, PILOTO_NOMBRE, PILOTO_APELLIDO, PILOTO_NACIONALIDAD, PILOTO_FECHA_NACIMIENTO
+GO
 
 -- Circuito
 
