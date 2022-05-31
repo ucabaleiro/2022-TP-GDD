@@ -229,7 +229,12 @@ GROUP BY ESCUDERIA_NOMBRE,
 GO
 
 -- Auto
-
+INSERT INTO [dbo].[Auto] ([codigo_escuderia], [modelo_auto], [numero_auto])
+SELECT DISTINCT E.codigo_escuderia, AUTO_MODELO, AUTO_NUMERO
+FROM gd_esquema.Maestra LEFT JOIN dbo.Escuderia E ON
+E.nacionalidad_escuderia = ESCUDERIA_NACIONALIDAD AND E.nombre_escuderia = ESCUDERIA_NOMBRE
+WHERE AUTO_MODELO IS NOT NULL AND AUTO_NUMERO IS NOT NULL
+GROUP BY E.codigo_escuderia, AUTO_MODELO, AUTO_NUMERO
 
 -- Piloto
 
