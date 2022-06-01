@@ -144,7 +144,7 @@ GO
 
 CREATE TABLE [dbo].[Neumatico] (
     [num_serie_neumatico] nvarchar(255) NOT NULL PRIMARY KEY,
-    [modelo_neumatico] nvarchar(255) NOT NULL
+    [modelo_neumatico] nvarchar(255)
 )
 GO
 
