@@ -545,4 +545,109 @@ WHERE TELE_FRENO4_NRO_SERIE IS NOT NULL AND
  TELE_FRENO4_TEMPERATURA IS NOT NULL
 GO
 
+-- Cambios Neumatico
+INSERT INTO [dbo].[Cambio_Neumatico] ([num_serie_viejo], [num_serie_nuevo], [posicion])
+SELECT DISTINCT
+    NEUMATICO1_NRO_SERIE_VIEJO,
+    NEUMATICO1_NRO_SERIE_NUEVO,
+    NEUMATICO1_POSICION_VIEJO
+FROM gd_esquema.Maestra
+WHERE NEUMATICO1_NRO_SERIE_VIEJO IS NOT NULL
+AND    NEUMATICO1_NRO_SERIE_NUEVO IS NOT NULL
+AND    NEUMATICO1_POSICION_VIEJO IS NOT NULL
+
+INSERT INTO [dbo].[Cambio_Neumatico] ([num_serie_viejo], [num_serie_nuevo], [posicion])
+SELECT DISTINCT
+    NEUMATICO2_NRO_SERIE_VIEJO,
+    NEUMATICO2_NRO_SERIE_NUEVO,
+    NEUMATICO2_POSICION_VIEJO
+FROM gd_esquema.Maestra
+WHERE NEUMATICO2_NRO_SERIE_VIEJO IS NOT NULL
+AND    NEUMATICO2_NRO_SERIE_NUEVO IS NOT NULL
+AND    NEUMATICO2_POSICION_VIEJO IS NOT NULL
+
+INSERT INTO [dbo].[Cambio_Neumatico] ([num_serie_viejo], [num_serie_nuevo], [posicion])
+SELECT DISTINCT
+    NEUMATICO3_NRO_SERIE_VIEJO,
+    NEUMATICO3_NRO_SERIE_NUEVO,
+    NEUMATICO3_POSICION_VIEJO
+FROM gd_esquema.Maestra
+WHERE NEUMATICO3_NRO_SERIE_VIEJO IS NOT NULL
+AND    NEUMATICO3_NRO_SERIE_NUEVO IS NOT NULL
+AND    NEUMATICO3_POSICION_VIEJO IS NOT NULL
+
+INSERT INTO [dbo].[Cambio_Neumatico] ([num_serie_viejo], [num_serie_nuevo], [posicion])
+SELECT DISTINCT
+    NEUMATICO4_NRO_SERIE_VIEJO,
+    NEUMATICO4_NRO_SERIE_NUEVO,
+    NEUMATICO4_POSICION_VIEJO
+FROM gd_esquema.Maestra
+WHERE NEUMATICO4_NRO_SERIE_VIEJO IS NOT NULL
+AND    NEUMATICO4_NRO_SERIE_NUEVO IS NOT NULL
+AND    NEUMATICO4_POSICION_VIEJO IS NOT NULL
+
+-- Parada Box
+INSERT INTO [dbo].[Parada_Box]
+(
+    [codigo_auto],
+    [codigo_cambio_neumatico1],
+    [codigo_cambio_neumatico2],
+    [codigo_cambio_neumatico3],
+    [codigo_cambio_neumatico4],
+    [codigo_carrera],
+    [numero_vuelta_box],
+    [tiempo_parada_box]
+)
+SELECT DISTINCT
+    A.[codigo_auto],
+    N1.[codigo_cambio_neumatico],
+    N2.[codigo_cambio_neumatico],
+    N3.[codigo_cambio_neumatico],
+    N4.[codigo_cambio_neumatico],
+    C.[codigo_carrera],
+    M.PARADA_BOX_VUELTA,
+    M.PARADA_BOX_TIEMPO
+FROM [gd_esquema].[Maestra] M
+LEFT JOIN [dbo].[Auto] A ON 
+A.[modelo_auto] = M.AUTO_MODELO AND A.[numero_auto] = M.AUTO_NUMERO
+LEFT JOIN [dbo].[Cambio_Neumatico] N1 ON 
+N1.[num_serie_viejo] = M.NEUMATICO1_NRO_SERIE_VIEJO AND N1.[num_serie_nuevo] = M.NEUMATICO1_NRO_SERIE_NUEVO
+LEFT JOIN [dbo].[Cambio_Neumatico] N2 ON
+N2.[num_serie_viejo] = M.NEUMATICO2_NRO_SERIE_VIEJO AND N2.[num_serie_nuevo] = M.NEUMATICO2_NRO_SERIE_NUEVO
+LEFT JOIN [dbo].[Cambio_Neumatico] N3 ON
+N3.[num_serie_viejo] = M.NEUMATICO3_NRO_SERIE_VIEJO AND N3.[num_serie_nuevo] = M.NEUMATICO3_NRO_SERIE_NUEVO
+LEFT JOIN [dbo].[Cambio_Neumatico] N4 ON
+N4.[num_serie_viejo] = M.NEUMATICO4_NRO_SERIE_VIEJO AND N4.[num_serie_nuevo] = M.NEUMATICO4_NRO_SERIE_NUEVO
+LEFT JOIN [dbo].[Carrera] C ON
+C.[codigo_carrera] = M.CODIGO_CARRERA
+WHERE M.PARADA_BOX_VUELTA IS NOT NULL AND M.PARADA_BOX_TIEMPO IS NOT NULL
+GO
+
+-- Incidente 
+INSERT INTO [dbo].[Incidente]
+( [codigo_auto], [codigo_circuito], [codigo_sector],
+  [bandera_incidente], [tipo_incidente], [tiempo_incidente],
+  [numero_vuelta] )
+SELECT DISTINCT
+	A.[codigo_auto],
+	M.CIRCUITO_CODIGO,
+	M.CODIGO_SECTOR,
+    M.INCIDENTE_BANDERA,
+	M.INCIDENTE_TIPO,
+	M.INCIDENTE_TIEMPO,
+	M.INCIDENTE_NUMERO_VUELTA
+FROM [gd_esquema].[Maestra] M LEFT JOIN [dbo].[Auto] A ON 
+	A.[modelo_auto] = M.AUTO_MODELO AND 
+	A.[numero_auto] = M.AUTO_NUMERO
+WHERE
+	M.INCIDENTE_BANDERA IS NOT NULL AND
+	M.INCIDENTE_TIPO IS NOT NULL AND
+	M.INCIDENTE_TIEMPO IS NOT NULL AND
+	M.INCIDENTE_NUMERO_VUELTA IS NOT NULL
+GROUP BY A.[codigo_auto], M.CIRCUITO_CODIGO, M.CODIGO_SECTOR, M.INCIDENTE_BANDERA, M.INCIDENTE_TIPO, M.INCIDENTE_TIEMPO, M.INCIDENTE_NUMERO_VUELTA
+
+
+-- Telemetria Auto
+
+
 /* Fin Inserts */
