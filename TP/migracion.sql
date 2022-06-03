@@ -648,6 +648,65 @@ GROUP BY A.[codigo_auto], M.CIRCUITO_CODIGO, M.CODIGO_SECTOR, M.INCIDENTE_BANDER
 
 
 -- Telemetria Auto
-
-
+INSERT INTO [dbo].[Telemetria_Auto] (
+	[codigo_telemetria_auto],
+	[codigo_auto],
+	[codigo_carrera],
+	[codigo_circuito],
+	[codigo_sector],
+	[codigo_telemetria_caja],
+	[codigo_telemetria_motor],
+	[codigo_tele_freno1],
+	[codigo_tele_freno2],
+	[codigo_tele_freno3],
+	[codigo_tele_freno4],
+	[codigo_tele_neumatico1],
+	[codigo_tele_neumatico2],
+	[codigo_tele_neumatico3],
+	[codigo_tele_neumatico4],
+	[num_vuelta_auto],
+	[distancia_vuelta_auto],
+	[distancia_carrera_auto],
+	[posicion_auto],
+	[tiempo_vuelta_auto],
+	[velocidad_auto],
+	[combustible_auto]
+	)
+	SELECT DISTINCT 
+		M.TELE_AUTO_CODIGO,
+		A.codigo_auto,
+		M.CODIGO_CARRERA,
+		M.CIRCUITO_CODIGO,
+		M.CODIGO_SECTOR,
+		TC.codigo_telemetria_caja,
+		TM.codigo_telemetria_motor,
+		TF1.codigo_telemetria_freno,
+		TF2.codigo_telemetria_freno,
+		TF3.codigo_telemetria_freno,
+		TF4.codigo_telemetria_freno,
+		TN1.codigo_telemetria_neumatico,
+		TN2.codigo_telemetria_neumatico,
+		TN3.codigo_telemetria_neumatico,
+		TN4.codigo_telemetria_neumatico,
+		M.TELE_AUTO_NUMERO_VUELTA,
+		M.TELE_AUTO_DISTANCIA_VUELTA,
+		M.TELE_AUTO_DISTANCIA_CARRERA,
+		M.TELE_AUTO_POSICION,
+		M.TELE_AUTO_TIEMPO_VUELTA,
+		M.TELE_AUTO_VELOCIDAD,
+		M.TELE_AUTO_COMBUSTIBLE
+	FROM 
+		gd_esquema.Maestra M
+		LEFT JOIN [dbo].[Auto] A ON M.AUTO_MODELO = A.modelo_auto AND M.AUTO_NUMERO = A.numero_auto
+		LEFT JOIN [dbo].[Telemetria_Caja] TC ON M.TELE_CAJA_NRO_SERIE = TC.num_serie_caja AND M.TELE_CAJA_DESGASTE = TC.desgaste_caja AND M.TELE_CAJA_RPM = TC.rpm_caja AND M.TELE_CAJA_TEMP_ACEITE = TC.temp_aceite_caja
+		LEFT JOIN [dbo].[Telemetria_Motor] TM ON M.TELE_MOTOR_NRO_SERIE = TM.num_serie_motor AND TM.potencia_motor = M.TELE_MOTOR_POTENCIA AND TM.rpm_motor = M.TELE_MOTOR_RPM AND TM.temp_aceite_motor = M.TELE_MOTOR_TEMP_ACEITE AND TM.temp_agua_motor = M.TELE_MOTOR_TEMP_AGUA
+		LEFT JOIN [dbo].[Telemetria_Freno] TF1 ON  TF1.num_serie_freno = M.TELE_FRENO1_NRO_SERIE AND TF1.posicion_freno = M.TELE_FRENO1_POSICION AND TF1.grosor_pastilla = M.TELE_FRENO1_GROSOR_PASTILLA AND TF1.temperatura_freno = M.TELE_FRENO1_TEMPERATURA
+		LEFT JOIN [dbo].[Telemetria_Freno] TF2 ON  TF2.num_serie_freno = M.TELE_FRENO2_NRO_SERIE AND TF2.posicion_freno = M.TELE_FRENO2_POSICION AND TF2.grosor_pastilla = M.TELE_FRENO2_GROSOR_PASTILLA AND TF2.temperatura_freno = M.TELE_FRENO2_TEMPERATURA
+		LEFT JOIN [dbo].[Telemetria_Freno] TF3 ON  TF3.num_serie_freno = M.TELE_FRENO3_NRO_SERIE AND TF3.posicion_freno = M.TELE_FRENO3_POSICION AND TF3.grosor_pastilla = M.TELE_FRENO3_GROSOR_PASTILLA AND TF3.temperatura_freno = M.TELE_FRENO3_TEMPERATURA
+		LEFT JOIN [dbo].[Telemetria_Freno] TF4 ON  TF4.num_serie_freno = M.TELE_FRENO4_NRO_SERIE AND TF4.posicion_freno = M.TELE_FRENO4_POSICION AND TF4.grosor_pastilla = M.TELE_FRENO4_GROSOR_PASTILLA AND TF4.temperatura_freno = M.TELE_FRENO4_TEMPERATURA
+		LEFT JOIN [dbo].[Telemetria_Neumatico] TN1 ON TN1.num_serie_neumatico = M.TELE_NEUMATICO1_NRO_SERIE AND TN1.profundidad_neumatico = M.TELE_NEUMATICO1_PROFUNDIDAD and TN1.temperatura_neumatico = M.TELE_NEUMATICO1_TEMPERATURA AND TN1.presion_neumatico = M.TELE_NEUMATICO1_PRESION AND TN1.posicion_neumatico = M.TELE_NEUMATICO1_POSICION
+		LEFT JOIN [dbo].[Telemetria_Neumatico] TN2 ON TN2.num_serie_neumatico = M.TELE_NEUMATICO2_NRO_SERIE AND TN2.profundidad_neumatico = M.TELE_NEUMATICO2_PROFUNDIDAD and TN2.temperatura_neumatico = M.TELE_NEUMATICO2_TEMPERATURA AND TN2.presion_neumatico = M.TELE_NEUMATICO2_PRESION AND TN2.posicion_neumatico = M.TELE_NEUMATICO2_POSICION
+		LEFT JOIN [dbo].[Telemetria_Neumatico] TN3 ON TN3.num_serie_neumatico = M.TELE_NEUMATICO3_NRO_SERIE AND TN3.profundidad_neumatico = M.TELE_NEUMATICO3_PROFUNDIDAD and TN3.temperatura_neumatico = M.TELE_NEUMATICO3_TEMPERATURA AND TN3.presion_neumatico = M.TELE_NEUMATICO3_PRESION AND TN3.posicion_neumatico = M.TELE_NEUMATICO3_POSICION
+		LEFT JOIN [dbo].[Telemetria_Neumatico] TN4 ON TN4.num_serie_neumatico = M.TELE_NEUMATICO4_NRO_SERIE AND TN4.profundidad_neumatico = M.TELE_NEUMATICO4_PROFUNDIDAD and TN4.temperatura_neumatico = M.TELE_NEUMATICO4_TEMPERATURA AND TN4.presion_neumatico = M.TELE_NEUMATICO4_PRESION AND TN4.posicion_neumatico = M.TELE_NEUMATICO4_POSICION
+	WHERE M.TELE_AUTO_CODIGO IS NOT NULL
 /* Fin Inserts */
