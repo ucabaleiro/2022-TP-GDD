@@ -16,6 +16,10 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Parad
 DROP TABLE [dbo].[Parada_Box]
 GO
 
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Incidente_Auto]') AND type in (N'U'))
+DROP TABLE [dbo].[Incidente_Auto]
+GO
+
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Incidente]') AND type in (N'U'))
 DROP TABLE [dbo].[Incidente]
 GO
@@ -126,12 +130,18 @@ CREATE TABLE [dbo].[Incidente] (
     [codigo_incidente] int NOT NULL IDENTITY PRIMARY KEY,
     [codigo_sector] int NOT NULL,
 	[codigo_circuito] int NOT NULL FOREIGN KEY REFERENCES [dbo].[Circuito] ([codigo_circuito]),
-    [codigo_auto] int NOT NULL FOREIGN KEY REFERENCES [dbo].[Auto],
     [bandera_incidente] nvarchar(255) NOT NULL,
-    [tipo_incidente] nvarchar(255) NOT NULL,
     [tiempo_incidente] decimal(18,2) NOT NULL,
-    [numero_vuelta] decimal(18,0) NOT NULL,
 	CONSTRAINT FK_INCIDENTE_A_SECTOR FOREIGN KEY([codigo_circuito],[codigo_sector]) REFERENCES [dbo].[Sector]([codigo_circuito],[codigo_sector]),
+)
+GO
+
+CREATE TABLE [dbo].[Incidente_Auto] (
+    [codigo_incidente] int NOT NULL,
+    [codigo_auto] int NOT NULL,
+    [numero_vuelta] decimal(18,0) NOT NULL,
+    [tipo_incidente] nvarchar(255) NOT NULL,
+    CONSTRAINT PK_INCIDENTE_AUTO PRIMARY KEY (codigo_incidente, codigo_auto)
 )
 GO
 
@@ -625,27 +635,51 @@ GO
 
 -- Incidente 
 INSERT INTO [dbo].[Incidente]
-( [codigo_auto], [codigo_circuito], [codigo_sector],
-  [bandera_incidente], [tipo_incidente], [tiempo_incidente],
-  [numero_vuelta] )
+([codigo_circuito], [codigo_sector],
+  [bandera_incidente], [tiempo_incidente] )
 SELECT DISTINCT
-	A.[codigo_auto],
 	M.CIRCUITO_CODIGO,
 	M.CODIGO_SECTOR,
     M.INCIDENTE_BANDERA,
-	M.INCIDENTE_TIPO,
-	M.INCIDENTE_TIEMPO,
-	M.INCIDENTE_NUMERO_VUELTA
-FROM [gd_esquema].[Maestra] M LEFT JOIN [dbo].[Auto] A ON 
-	A.[modelo_auto] = M.AUTO_MODELO AND 
-	A.[numero_auto] = M.AUTO_NUMERO
+	M.INCIDENTE_TIEMPO
+FROM [gd_esquema].[Maestra] M
 WHERE
 	M.INCIDENTE_BANDERA IS NOT NULL AND
 	M.INCIDENTE_TIPO IS NOT NULL AND
 	M.INCIDENTE_TIEMPO IS NOT NULL AND
 	M.INCIDENTE_NUMERO_VUELTA IS NOT NULL
-GROUP BY A.[codigo_auto], M.CIRCUITO_CODIGO, M.CODIGO_SECTOR, M.INCIDENTE_BANDERA, M.INCIDENTE_TIPO, M.INCIDENTE_TIEMPO, M.INCIDENTE_NUMERO_VUELTA
+GROUP BY M.CIRCUITO_CODIGO, M.CODIGO_SECTOR, M.INCIDENTE_BANDERA, M.INCIDENTE_TIPO, M.INCIDENTE_TIEMPO, M.INCIDENTE_NUMERO_VUELTA
 
+INSERT INTO [dbo].[Incidente_Auto]
+(
+    [codigo_incidente],
+    [codigo_auto],
+    [numero_vuelta],
+    [tipo_incidente]
+)
+SELECT DISTINCT
+    I.[codigo_incidente],
+    A.[codigo_auto],
+    M.INCIDENTE_NUMERO_VUELTA,
+    M.INCIDENTE_TIPO
+FROM [gd_esquema].[Maestra] M 
+LEFT JOIN [dbo].[Auto] A ON
+    A.[modelo_auto] = M.AUTO_MODELO AND A.[numero_auto] = M.AUTO_NUMERO
+LEFT JOIN [dbo].[Incidente] I ON
+    I.[codigo_circuito] = M.CIRCUITO_CODIGO 
+AND I.[codigo_sector] = M.CODIGO_SECTOR 
+AND I.[bandera_incidente] = M.INCIDENTE_BANDERA
+AND I.[tiempo_incidente] = M.INCIDENTE_TIEMPO
+WHERE 
+    M.INCIDENTE_BANDERA IS NOT NULL AND
+    M.INCIDENTE_TIPO IS NOT NULL AND
+    M.INCIDENTE_TIEMPO IS NOT NULL AND
+    M.INCIDENTE_NUMERO_VUELTA IS NOT NULL AND
+    M.AUTO_MODELO IS NOT NULL AND
+    M.AUTO_NUMERO IS NOT NULL AND 
+    M.CIRCUITO_CODIGO IS NOT NULL AND
+    M.CODIGO_SECTOR IS NOT NULL
+GO
 
 -- Telemetria Auto
 INSERT INTO [dbo].[Telemetria_Auto] (
