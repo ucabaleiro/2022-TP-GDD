@@ -396,6 +396,7 @@ insert into dbo.Neumatico ([num_serie_neumatico], [modelo_neumatico])
 (	select distinct TELE_NEUMATICO4_NRO_SERIE, NEUMATICO4_TIPO_VIEJO
 	from gd_esquema.Maestra
 	where TELE_NEUMATICO4_NRO_SERIE is not null and TELE_NEUMATICO4_NRO_SERIE not in (select num_serie_neumatico from dbo.Neumatico) )
+GO
 
 -- Telemetria Neumatico
 
@@ -414,6 +415,7 @@ where TELE_NEUMATICO3_NRO_SERIE is not null
 insert into [dbo].[Telemetria_Neumatico]([num_serie_neumatico],[posicion_neumatico],[profundidad_neumatico],[temperatura_neumatico],[presion_neumatico])
 select distinct TELE_NEUMATICO4_NRO_SERIE, TELE_NEUMATICO4_POSICION, TELE_NEUMATICO4_PROFUNDIDAD, TELE_NEUMATICO4_TEMPERATURA, TELE_NEUMATICO4_PRESION from gd_esquema.Maestra
 where TELE_NEUMATICO4_NRO_SERIE is not null
+GO
 
 -- Escuderia
 INSERT INTO [dbo].[Escuderia] ([nombre_escuderia], [nacionalidad_escuderia])
@@ -595,6 +597,7 @@ FROM gd_esquema.Maestra
 WHERE NEUMATICO4_NRO_SERIE_VIEJO IS NOT NULL
 AND    NEUMATICO4_NRO_SERIE_NUEVO IS NOT NULL
 AND    NEUMATICO4_POSICION_VIEJO IS NOT NULL
+GO
 
 -- Parada Box
 INSERT INTO [dbo].[Parada_Box]
@@ -649,6 +652,7 @@ WHERE
 	M.INCIDENTE_TIEMPO IS NOT NULL AND
 	M.INCIDENTE_NUMERO_VUELTA IS NOT NULL
 GROUP BY M.CIRCUITO_CODIGO, M.CODIGO_SECTOR, M.INCIDENTE_BANDERA, M.INCIDENTE_TIPO, M.INCIDENTE_TIEMPO, M.INCIDENTE_NUMERO_VUELTA
+go
 
 INSERT INTO [dbo].[Incidente_Auto]
 (
@@ -743,4 +747,5 @@ INSERT INTO [dbo].[Telemetria_Auto] (
 		LEFT JOIN [dbo].[Telemetria_Neumatico] TN3 ON TN3.num_serie_neumatico = M.TELE_NEUMATICO3_NRO_SERIE AND TN3.profundidad_neumatico = M.TELE_NEUMATICO3_PROFUNDIDAD and TN3.temperatura_neumatico = M.TELE_NEUMATICO3_TEMPERATURA AND TN3.presion_neumatico = M.TELE_NEUMATICO3_PRESION AND TN3.posicion_neumatico = M.TELE_NEUMATICO3_POSICION
 		LEFT JOIN [dbo].[Telemetria_Neumatico] TN4 ON TN4.num_serie_neumatico = M.TELE_NEUMATICO4_NRO_SERIE AND TN4.profundidad_neumatico = M.TELE_NEUMATICO4_PROFUNDIDAD and TN4.temperatura_neumatico = M.TELE_NEUMATICO4_TEMPERATURA AND TN4.presion_neumatico = M.TELE_NEUMATICO4_PRESION AND TN4.posicion_neumatico = M.TELE_NEUMATICO4_POSICION
 	WHERE M.TELE_AUTO_CODIGO IS NOT NULL
+GO
 /* Fin Inserts */
