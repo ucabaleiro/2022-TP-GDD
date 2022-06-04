@@ -157,7 +157,7 @@ GO
 
 CREATE TABLE [dbo].[Neumatico] (
     [num_serie_neumatico] nvarchar(255) NOT NULL PRIMARY KEY,
-    [modelo_neumatico] nvarchar(255)
+    [modelo_neumatico] nvarchar(255) NOT NULL
 )
 GO
 
@@ -378,22 +378,22 @@ insert into dbo.Neumatico ([num_serie_neumatico], [modelo_neumatico])
 	where NEUMATICO4_NRO_SERIE_NUEVO is not null and NEUMATICO4_NRO_SERIE_NUEVO not in (select num_serie_neumatico from dbo.Neumatico) )
 
 insert into dbo.Neumatico ([num_serie_neumatico], [modelo_neumatico])
-(	select distinct TELE_NEUMATICO1_NRO_SERIE, null
+(	select distinct TELE_NEUMATICO1_NRO_SERIE, NEUMATICO1_TIPO_VIEJO
 	from gd_esquema.Maestra
 	where TELE_NEUMATICO1_NRO_SERIE is not null and TELE_NEUMATICO1_NRO_SERIE not in (select num_serie_neumatico from dbo.Neumatico) )
 
 insert into dbo.Neumatico ([num_serie_neumatico], [modelo_neumatico])
-(	select distinct TELE_NEUMATICO2_NRO_SERIE, null
+(	select distinct TELE_NEUMATICO2_NRO_SERIE, NEUMATICO2_TIPO_VIEJO
 	from gd_esquema.Maestra
 	where TELE_NEUMATICO2_NRO_SERIE is not null and TELE_NEUMATICO2_NRO_SERIE not in (select num_serie_neumatico from dbo.Neumatico) )
 
 insert into dbo.Neumatico ([num_serie_neumatico], [modelo_neumatico])
-(	select distinct TELE_NEUMATICO3_NRO_SERIE, null
+(	select distinct TELE_NEUMATICO3_NRO_SERIE, NEUMATICO3_TIPO_VIEJO
 	from gd_esquema.Maestra
 	where TELE_NEUMATICO3_NRO_SERIE is not null and TELE_NEUMATICO3_NRO_SERIE not in (select num_serie_neumatico from dbo.Neumatico) )
 
 insert into dbo.Neumatico ([num_serie_neumatico], [modelo_neumatico])
-(	select distinct TELE_NEUMATICO4_NRO_SERIE, null
+(	select distinct TELE_NEUMATICO4_NRO_SERIE, NEUMATICO4_TIPO_VIEJO
 	from gd_esquema.Maestra
 	where TELE_NEUMATICO4_NRO_SERIE is not null and TELE_NEUMATICO4_NRO_SERIE not in (select num_serie_neumatico from dbo.Neumatico) )
 
