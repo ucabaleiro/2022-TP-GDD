@@ -465,7 +465,7 @@ WHERE
 
 
 -- Carrera
-INSERT INTO [MARCO_AND_FRIENDS].[Carrera] ([codigo_carrera],[fecha_carrera], [clima_carrera], [total_carrera], [cantidad_vueltas_carrera])
+INSERT INTO [MARCO_AND_FRIENDS].[Carrera] ([codigo_carrera], [codigo_circuito], [fecha_carrera], [clima_carrera], [total_carrera], [cantidad_vueltas_carrera])
 SELECT DISTINCT CODIGO_CARRERA, CIRCUITO_CODIGO, CARRERA_FECHA, CARRERA_CLIMA, CARRERA_TOTAL_CARRERA, CARRERA_CANT_VUELTAS
 FROM [gd_esquema].[Maestra]
 WHERE
