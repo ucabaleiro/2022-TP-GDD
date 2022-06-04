@@ -24,16 +24,16 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[MARCO_AND_F
 DROP TABLE [MARCO_AND_FRIENDS].[Incidente]
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[MARCO_AND_FRIENDS].[Carrera]') AND type in (N'U'))
-DROP TABLE [MARCO_AND_FRIENDS].[Carrera]
-GO
-
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[MARCO_AND_FRIENDS].[Sector]') AND type in (N'U'))
 DROP TABLE [MARCO_AND_FRIENDS].[Sector]
 GO
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[MARCO_AND_FRIENDS].[Circuito]') AND type in (N'U'))
 DROP TABLE [MARCO_AND_FRIENDS].[Circuito]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[MARCO_AND_FRIENDS].[Carrera]') AND type in (N'U'))
+DROP TABLE [MARCO_AND_FRIENDS].[Carrera]
 GO
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[MARCO_AND_FRIENDS].[Piloto]') AND type in (N'U'))
@@ -102,21 +102,20 @@ CREATE PROCEDURE [MARCO_AND_FRIENDS].[MIGRAR_TABLA_MAESTRA] AS
 BEGIN
 
 /*Comienzo Creates de las tablas*/
-CREATE TABLE [MARCO_AND_FRIENDS].[Carrera] (
-    [codigo_carrera] int NOT NULL PRIMARY KEY,
-    [fecha_carrera] date NOT NULL,
-    [clima_carrera] nvarchar(100) NOT NULL,
-    [total_carrera] decimal(18,2) NOT NULL,
-    [cantidad_vueltas_carrera] int NOT NULL
-)
-
-
 CREATE TABLE [MARCO_AND_FRIENDS].[Circuito] (
     [codigo_circuito] int NOT NULL PRIMARY KEY,
     [nombre_circuito] nvarchar(255) NOT NULL,
     [pais_circuito] nvarchar(255) NOT NULL
 )
 
+CREATE TABLE [MARCO_AND_FRIENDS].[Carrera] (
+    [codigo_carrera] int NOT NULL PRIMARY KEY,
+    [codigo_circuito] int NOT NULL FOREIGN KEY REFERENCES [MARCO_AND_FRIENDS].[Circuito] ([codigo_circuito]),
+    [fecha_carrera] date NOT NULL,
+    [clima_carrera] nvarchar(100) NOT NULL,
+    [total_carrera] decimal(18,2) NOT NULL,
+    [cantidad_vueltas_carrera] int NOT NULL
+)
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Sector] (
     [codigo_circuito] int NOT NULL FOREIGN KEY REFERENCES [MARCO_AND_FRIENDS].[Circuito] ([codigo_circuito]),
@@ -173,7 +172,7 @@ CREATE TABLE [MARCO_AND_FRIENDS].[Piloto] (
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Neumatico] (
     [num_serie_neumatico] nvarchar(255) NOT NULL PRIMARY KEY,
-    [modelo_neumatico] nvarchar(255) NOT NULL
+    [tipo_neumatico] nvarchar(255) NOT NULL
 )
 
 
@@ -333,62 +332,62 @@ WHERE
 
 
 -- Neumatico
-insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [modelo_neumatico])
+insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [tipo_neumatico])
 (	select distinct NEUMATICO1_NRO_SERIE_VIEJO, NEUMATICO1_TIPO_VIEJO
 	from gd_esquema.Maestra
 	where NEUMATICO1_NRO_SERIE_VIEJO is not null and NEUMATICO1_NRO_SERIE_VIEJO not in (select num_serie_neumatico from MARCO_AND_FRIENDS.Neumatico) )
 
-insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [modelo_neumatico])
+insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [tipo_neumatico])
 (	select distinct NEUMATICO2_NRO_SERIE_VIEJO, NEUMATICO2_TIPO_VIEJO
 	from gd_esquema.Maestra
 	where NEUMATICO2_NRO_SERIE_VIEJO is not null and NEUMATICO2_NRO_SERIE_VIEJO not in (select num_serie_neumatico from MARCO_AND_FRIENDS.Neumatico) )
 
-insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [modelo_neumatico])
+insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [tipo_neumatico])
 (	select distinct NEUMATICO3_NRO_SERIE_VIEJO, NEUMATICO3_TIPO_VIEJO
 	from gd_esquema.Maestra
 	where NEUMATICO3_NRO_SERIE_VIEJO is not null and NEUMATICO3_NRO_SERIE_VIEJO not in (select num_serie_neumatico from MARCO_AND_FRIENDS.Neumatico) )
 
-insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [modelo_neumatico])
+insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [tipo_neumatico])
 (	select distinct NEUMATICO4_NRO_SERIE_VIEJO, NEUMATICO4_TIPO_VIEJO
 	from gd_esquema.Maestra
 	where NEUMATICO4_NRO_SERIE_VIEJO is not null and NEUMATICO4_NRO_SERIE_VIEJO not in (select num_serie_neumatico from MARCO_AND_FRIENDS.Neumatico) )
 
-insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [modelo_neumatico])
+insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [tipo_neumatico])
 (	select distinct NEUMATICO1_NRO_SERIE_NUEVO, NEUMATICO1_TIPO_NUEVO
 	from gd_esquema.Maestra
 	where NEUMATICO1_NRO_SERIE_NUEVO is not null and NEUMATICO1_NRO_SERIE_NUEVO not in (select num_serie_neumatico from MARCO_AND_FRIENDS.Neumatico) )
 
-insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [modelo_neumatico])
+insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [tipo_neumatico])
 (	select distinct NEUMATICO2_NRO_SERIE_NUEVO, NEUMATICO2_TIPO_NUEVO
 	from gd_esquema.Maestra
 	where NEUMATICO2_NRO_SERIE_NUEVO is not null and NEUMATICO2_NRO_SERIE_NUEVO not in (select num_serie_neumatico from MARCO_AND_FRIENDS.Neumatico) )
 
-insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [modelo_neumatico])
+insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [tipo_neumatico])
 (	select distinct NEUMATICO3_NRO_SERIE_NUEVO, NEUMATICO3_TIPO_NUEVO
 	from gd_esquema.Maestra
 	where NEUMATICO3_NRO_SERIE_NUEVO is not null and NEUMATICO3_NRO_SERIE_NUEVO not in (select num_serie_neumatico from MARCO_AND_FRIENDS.Neumatico) )
 
-insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [modelo_neumatico])
+insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [tipo_neumatico])
 (	select distinct NEUMATICO4_NRO_SERIE_NUEVO, NEUMATICO4_TIPO_NUEVO
 	from gd_esquema.Maestra
 	where NEUMATICO4_NRO_SERIE_NUEVO is not null and NEUMATICO4_NRO_SERIE_NUEVO not in (select num_serie_neumatico from MARCO_AND_FRIENDS.Neumatico) )
 
-insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [modelo_neumatico])
+insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [tipo_neumatico])
 (	select distinct TELE_NEUMATICO1_NRO_SERIE, NEUMATICO1_TIPO_VIEJO
 	from gd_esquema.Maestra
 	where TELE_NEUMATICO1_NRO_SERIE is not null and TELE_NEUMATICO1_NRO_SERIE not in (select num_serie_neumatico from MARCO_AND_FRIENDS.Neumatico) )
 
-insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [modelo_neumatico])
+insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [tipo_neumatico])
 (	select distinct TELE_NEUMATICO2_NRO_SERIE, NEUMATICO2_TIPO_VIEJO
 	from gd_esquema.Maestra
 	where TELE_NEUMATICO2_NRO_SERIE is not null and TELE_NEUMATICO2_NRO_SERIE not in (select num_serie_neumatico from MARCO_AND_FRIENDS.Neumatico) )
 
-insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [modelo_neumatico])
+insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [tipo_neumatico])
 (	select distinct TELE_NEUMATICO3_NRO_SERIE, NEUMATICO3_TIPO_VIEJO
 	from gd_esquema.Maestra
 	where TELE_NEUMATICO3_NRO_SERIE is not null and TELE_NEUMATICO3_NRO_SERIE not in (select num_serie_neumatico from MARCO_AND_FRIENDS.Neumatico) )
 
-insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [modelo_neumatico])
+insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [tipo_neumatico])
 (	select distinct TELE_NEUMATICO4_NRO_SERIE, NEUMATICO4_TIPO_VIEJO
 	from gd_esquema.Maestra
 	where TELE_NEUMATICO4_NRO_SERIE is not null and TELE_NEUMATICO4_NRO_SERIE not in (select num_serie_neumatico from MARCO_AND_FRIENDS.Neumatico) )
@@ -467,10 +466,11 @@ WHERE
 
 -- Carrera
 INSERT INTO [MARCO_AND_FRIENDS].[Carrera] ([codigo_carrera],[fecha_carrera], [clima_carrera], [total_carrera], [cantidad_vueltas_carrera])
-SELECT DISTINCT CODIGO_CARRERA, CARRERA_FECHA, CARRERA_CLIMA, CARRERA_TOTAL_CARRERA, CARRERA_CANT_VUELTAS
+SELECT DISTINCT CODIGO_CARRERA, CIRCUITO_CODIGO, CARRERA_FECHA, CARRERA_CLIMA, CARRERA_TOTAL_CARRERA, CARRERA_CANT_VUELTAS
 FROM [gd_esquema].[Maestra]
 WHERE
     CARRERA_FECHA IS NOT NULL AND
+    CIRCUITO_CODIGO IS NOT NULL AND
     CARRERA_CLIMA IS NOT NULL AND
     CARRERA_TOTAL_CARRERA IS NOT NULL AND
     CARRERA_CANT_VUELTAS IS NOT NULL
