@@ -84,13 +84,19 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[MARCO_AND_F
 DROP TABLE [MARCO_AND_FRIENDS].[Caja]
 GO
 
-DROP SCHEMA IF EXISTS MARCO_AND_FRIENDS;
+DROP PROCEDURE IF EXISTS [MARCO_AND_FRIENDS].[MIGRAR_TABLA_MAESTRA]
+GO
+
+DROP SCHEMA IF EXISTS MARCO_AND_FRIENDS
 GO
 /* Fin Drops de las tablas */
 
 /*Comienzo Migracion */
-CREATE SCHEMA MARCO_AND_FRIENDS;
+CREATE SCHEMA MARCO_AND_FRIENDS
 GO
+
+CREATE PROCEDURE [MARCO_AND_FRIENDS].[MIGRAR_TABLA_MAESTRA] AS
+BEGIN
 
 /*Comienzo Creates de las tablas*/
 CREATE TABLE [MARCO_AND_FRIENDS].[Carrera] (
@@ -100,14 +106,14 @@ CREATE TABLE [MARCO_AND_FRIENDS].[Carrera] (
     [total_carrera] decimal(18,2) NOT NULL,
     [cantidad_vueltas_carrera] int NOT NULL
 )
-GO
+
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Circuito] (
     [codigo_circuito] int NOT NULL PRIMARY KEY,
     [nombre_circuito] nvarchar(255) NOT NULL,
     [pais_circuito] nvarchar(255) NOT NULL
 )
-GO
+
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Sector] (
     [codigo_circuito] int NOT NULL FOREIGN KEY REFERENCES [MARCO_AND_FRIENDS].[Circuito] ([codigo_circuito]),
@@ -116,14 +122,14 @@ CREATE TABLE [MARCO_AND_FRIENDS].[Sector] (
     [tipo_sector] nvarchar(255) NOT NULL,
     CONSTRAINT PK_SECTOR PRIMARY KEY (codigo_circuito, codigo_sector)
 )
-GO
+
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Escuderia] (
     [codigo_escuderia] int NOT NULL IDENTITY PRIMARY KEY,
     [nombre_escuderia] nvarchar(255) NOT NULL,
     [nacionalidad_escuderia] nvarchar(255) NOT NULL,
 )
-GO
+
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Auto] (
     [codigo_auto] int NOT NULL IDENTITY PRIMARY KEY,
@@ -131,7 +137,7 @@ CREATE TABLE [MARCO_AND_FRIENDS].[Auto] (
     [modelo_auto] nvarchar(255) NOT NULL,
     [numero_auto] int NOT NULL
 )
-GO
+
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Incidente] (
     [codigo_incidente] int NOT NULL IDENTITY PRIMARY KEY,
@@ -141,7 +147,7 @@ CREATE TABLE [MARCO_AND_FRIENDS].[Incidente] (
     [tiempo_incidente] decimal(18,2) NOT NULL,
 	CONSTRAINT FK_INCIDENTE_A_SECTOR FOREIGN KEY([codigo_circuito],[codigo_sector]) REFERENCES [MARCO_AND_FRIENDS].[Sector]([codigo_circuito],[codigo_sector]),
 )
-GO
+
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Incidente_Auto] (
     [codigo_incidente] int NOT NULL,
@@ -150,7 +156,7 @@ CREATE TABLE [MARCO_AND_FRIENDS].[Incidente_Auto] (
     [tipo_incidente] nvarchar(255) NOT NULL,
     CONSTRAINT PK_INCIDENTE_AUTO PRIMARY KEY (codigo_incidente, codigo_auto)
 )
-GO
+
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Piloto] (
     [codigo_piloto] int NOT NULL IDENTITY PRIMARY KEY,
@@ -160,13 +166,13 @@ CREATE TABLE [MARCO_AND_FRIENDS].[Piloto] (
     [nacionalidad_piloto] nvarchar(50) NOT NULL,
     [nacimiento_piloto] date NOT NULL
 )
-GO
+
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Neumatico] (
     [num_serie_neumatico] nvarchar(255) NOT NULL PRIMARY KEY,
     [modelo_neumatico] nvarchar(255) NOT NULL
 )
-GO
+
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Telemetria_Neumatico] (
     [codigo_telemetria_neumatico] int NOT NULL IDENTITY PRIMARY KEY,
@@ -176,7 +182,7 @@ CREATE TABLE [MARCO_AND_FRIENDS].[Telemetria_Neumatico] (
     [temperatura_neumatico] decimal(18,6) NOT NULL,
     [presion_neumatico] decimal(18,6) NOT NULL,
 )
-GO
+
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Cambio_Neumatico] (
     [codigo_cambio_neumatico] int NOT NULL IDENTITY PRIMARY KEY,
@@ -184,7 +190,7 @@ CREATE TABLE [MARCO_AND_FRIENDS].[Cambio_Neumatico] (
     [num_serie_nuevo] nvarchar(255) NOT NULL FOREIGN KEY REFERENCES [MARCO_AND_FRIENDS].[Neumatico] ([num_serie_neumatico]),
     [posicion] nvarchar(255) NOT NULL
 )
-GO
+
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Parada_Box] (
     [codigo_parada_box] int NOT NULL IDENTITY PRIMARY KEY,
@@ -197,13 +203,13 @@ CREATE TABLE [MARCO_AND_FRIENDS].[Parada_Box] (
     [numero_vuelta_box] decimal(18,0) NOT NULL,
     [tiempo_parada_box] decimal(18,2) NOT NULL
 )
-GO
+
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Motor] (
     [num_serie_motor] nvarchar(255) NOT NULL PRIMARY KEY,
     [modelo_motor] nvarchar(255) NOT NULL
 )
-GO
+
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Telemetria_Motor] (
     [codigo_telemetria_motor] int NOT NULL IDENTITY PRIMARY KEY,
@@ -213,13 +219,13 @@ CREATE TABLE [MARCO_AND_FRIENDS].[Telemetria_Motor] (
     [temp_aceite_motor] decimal(18,6) NOT NULL,
     [temp_agua_motor] decimal(18,6) NOT NULL
 )
-GO
+
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Freno] (
     [num_serie_freno] nvarchar(255) NOT NULL PRIMARY KEY,
     [tamanio_disco_freno] nvarchar(255) NOT NULL
 )
-GO
+
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Telemetria_Freno] (
     [codigo_telemetria_freno] int NOT NULL IDENTITY PRIMARY KEY,
@@ -228,7 +234,7 @@ CREATE TABLE [MARCO_AND_FRIENDS].[Telemetria_Freno] (
     [posicion_freno] nvarchar(255) NOT NULL,
     [temperatura_freno] decimal(18,2) NOT NULL
 )
-GO
+
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Caja] (
     [num_serie_caja] nvarchar(255) NOT NULL PRIMARY KEY,
@@ -242,7 +248,7 @@ CREATE TABLE [MARCO_AND_FRIENDS].[Telemetria_Caja] (
     [rpm_caja] decimal(18,2) NOT NULL,
     [desgaste_caja] decimal(18,2) NOT NULL
 )
-GO
+
 
 CREATE TABLE [MARCO_AND_FRIENDS].[Telemetria_Auto] (
     [codigo_telemetria_auto] decimal(18,0) NOT NULL PRIMARY KEY,
@@ -269,28 +275,8 @@ CREATE TABLE [MARCO_AND_FRIENDS].[Telemetria_Auto] (
     [combustible_auto] decimal(18,2) NOT NULL,
 	CONSTRAINT FK_TELE_AUTO_A_SECTOR FOREIGN KEY([codigo_circuito],[codigo_sector]) REFERENCES [MARCO_AND_FRIENDS].[Sector]([codigo_circuito],[codigo_sector]),
 )
-GO
+
 /* FIN CREACION TABLAS */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* COMIENZO CARGA DE DATOS */
 
 -- Motor
@@ -299,7 +285,7 @@ SELECT DISTINCT TELE_MOTOR_NRO_SERIE, TELE_MOTOR_MODELO
 FROM [gd_esquema].[Maestra]
 WHERE   TELE_MOTOR_NRO_SERIE IS NOT NULL 
     AND TELE_MOTOR_MODELO IS NOT NULL
-GO
+
 
 -- Telemetria Motor
 INSERT INTO [MARCO_AND_FRIENDS].[Telemetria_Motor]
@@ -321,7 +307,7 @@ WHERE   TELE_MOTOR_NRO_SERIE IS NOT NULL
     AND TELE_MOTOR_RPM IS NOT NULL
     AND TELE_MOTOR_TEMP_ACEITE IS NOT NULL
     AND TELE_MOTOR_TEMP_AGUA IS NOT NULL
-GO
+
 
 -- Caja
 INSERT INTO [MARCO_AND_FRIENDS].[Caja] ([num_serie_caja], [modelo_caja])
@@ -330,7 +316,7 @@ FROM [gd_esquema].[Maestra]
 WHERE
     TELE_CAJA_MODELO IS NOT NULL AND 
     TELE_CAJA_MODELO IS NOT NULL
-GO
+
 
 -- Telemetria Caja 
 INSERT INTO [MARCO_AND_FRIENDS].[Telemetria_Caja] (num_serie_caja, temp_aceite_caja, rpm_caja, desgaste_caja)
@@ -341,7 +327,7 @@ WHERE
     TELE_CAJA_TEMP_ACEITE IS NOT NULL AND 
     TELE_CAJA_RPM IS NOT NULL AND 
     TELE_CAJA_DESGASTE IS NOT NULL
-GO
+
 
 -- Neumatico
 insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [modelo_neumatico])
@@ -403,7 +389,7 @@ insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [modelo_neumatic
 (	select distinct TELE_NEUMATICO4_NRO_SERIE, NEUMATICO4_TIPO_VIEJO
 	from gd_esquema.Maestra
 	where TELE_NEUMATICO4_NRO_SERIE is not null and TELE_NEUMATICO4_NRO_SERIE not in (select num_serie_neumatico from MARCO_AND_FRIENDS.Neumatico) )
-GO
+
 
 -- Telemetria Neumatico
 
@@ -422,7 +408,7 @@ where TELE_NEUMATICO3_NRO_SERIE is not null
 insert into [MARCO_AND_FRIENDS].[Telemetria_Neumatico]([num_serie_neumatico],[posicion_neumatico],[profundidad_neumatico],[temperatura_neumatico],[presion_neumatico])
 select distinct TELE_NEUMATICO4_NRO_SERIE, TELE_NEUMATICO4_POSICION, TELE_NEUMATICO4_PROFUNDIDAD, TELE_NEUMATICO4_TEMPERATURA, TELE_NEUMATICO4_PRESION from gd_esquema.Maestra
 where TELE_NEUMATICO4_NRO_SERIE is not null
-GO
+
 
 -- Escuderia
 INSERT INTO [MARCO_AND_FRIENDS].[Escuderia] ([nombre_escuderia], [nacionalidad_escuderia])
@@ -432,7 +418,7 @@ WHERE   ESCUDERIA_NOMBRE IS NOT NULL
     AND ESCUDERIA_NACIONALIDAD IS NOT NULL
 GROUP BY ESCUDERIA_NOMBRE, 
         ESCUDERIA_NACIONALIDAD
-GO
+
 
 -- Auto
 INSERT INTO [MARCO_AND_FRIENDS].[Auto] ([codigo_escuderia], [modelo_auto], [numero_auto])
@@ -440,7 +426,7 @@ SELECT DISTINCT E.codigo_escuderia, AUTO_MODELO, AUTO_NUMERO
 FROM gd_esquema.Maestra LEFT JOIN MARCO_AND_FRIENDS.Escuderia E ON
 E.nacionalidad_escuderia = ESCUDERIA_NACIONALIDAD AND E.nombre_escuderia = ESCUDERIA_NOMBRE
 WHERE AUTO_MODELO IS NOT NULL AND AUTO_NUMERO IS NOT NULL
-GO
+
 
 -- Piloto
 INSERT INTO [MARCO_AND_FRIENDS].[Piloto] 
@@ -463,7 +449,7 @@ WHERE PILOTO_NOMBRE IS NOT NULL
 AND PILOTO_APELLIDO IS NOT NULL
 AND PILOTO_NACIONALIDAD IS NOT NULL
 AND PILOTO_FECHA_NACIMIENTO IS NOT NULL
-GO
+
 
 -- Circuito
 INSERT INTO [MARCO_AND_FRIENDS].[Circuito] ([codigo_circuito], [nombre_circuito], [pais_circuito])
@@ -473,7 +459,7 @@ WHERE
 	CIRCUITO_CODIGO IS NOT NULL AND
     CIRCUITO_NOMBRE IS NOT NULL AND
     CIRCUITO_PAIS	IS NOT NULL
-GO
+
 
 
 -- Carrera
@@ -485,7 +471,7 @@ WHERE
     CARRERA_CLIMA IS NOT NULL AND
     CARRERA_TOTAL_CARRERA IS NOT NULL AND
     CARRERA_CANT_VUELTAS IS NOT NULL
-GO
+
 
 
 -- Sector
@@ -496,7 +482,7 @@ WHERE
     CIRCUITO_CODIGO IS NOT NULL AND
     SECTO_TIPO IS NOT NULL AND
     SECTOR_DISTANCIA IS NOT NULL
-GO
+
 
 -- Freno
 INSERT INTO [MARCO_AND_FRIENDS].[Freno] ([num_serie_freno], [tamanio_disco_freno])
@@ -504,28 +490,28 @@ SELECT DISTINCT TELE_FRENO1_NRO_SERIE, TELE_FRENO1_TAMANIO_DISCO
 FROM [gd_esquema].[Maestra]
 WHERE TELE_FRENO1_NRO_SERIE IS NOT NULL AND
 TELE_FRENO1_TAMANIO_DISCO IS NOT NULL
-GO
+
 
 INSERT INTO [MARCO_AND_FRIENDS].[Freno] ([num_serie_freno], [tamanio_disco_freno])
 SELECT DISTINCT TELE_FRENO2_NRO_SERIE, TELE_FRENO2_TAMANIO_DISCO
 FROM [gd_esquema].[Maestra]
 WHERE TELE_FRENO2_NRO_SERIE IS NOT NULL AND
 TELE_FRENO2_TAMANIO_DISCO IS NOT NULL
-GO
+
 
 INSERT INTO [MARCO_AND_FRIENDS].[Freno] ([num_serie_freno], [tamanio_disco_freno])
 SELECT DISTINCT TELE_FRENO3_NRO_SERIE, TELE_FRENO3_TAMANIO_DISCO
 FROM [gd_esquema].[Maestra]
 WHERE TELE_FRENO3_NRO_SERIE IS NOT NULL AND
 TELE_FRENO3_TAMANIO_DISCO IS NOT NULL
-GO
+
 
 INSERT INTO [MARCO_AND_FRIENDS].[Freno] ([num_serie_freno], [tamanio_disco_freno])
 SELECT DISTINCT TELE_FRENO4_NRO_SERIE, TELE_FRENO4_TAMANIO_DISCO
 FROM [gd_esquema].[Maestra]
 WHERE TELE_FRENO4_NRO_SERIE IS NOT NULL AND
 TELE_FRENO4_TAMANIO_DISCO IS NOT NULL
-GO
+
 
 -- Telemetria Freno
 INSERT INTO [MARCO_AND_FRIENDS].[Telemetria_Freno] ([num_serie_freno], [grosor_pastilla],[posicion_freno], [temperatura_freno])
@@ -535,7 +521,7 @@ WHERE TELE_FRENO1_NRO_SERIE IS NOT NULL AND
  TELE_FRENO1_GROSOR_PASTILLA IS NOT NULL AND
  TELE_FRENO1_POSICION IS NOT NULL AND
  TELE_FRENO1_TEMPERATURA IS NOT NULL
-GO
+
 
 INSERT INTO [MARCO_AND_FRIENDS].[Telemetria_Freno] ([num_serie_freno], [grosor_pastilla],[posicion_freno], [temperatura_freno])
 SELECT DISTINCT TELE_FRENO2_NRO_SERIE, TELE_FRENO2_GROSOR_PASTILLA, TELE_FRENO2_POSICION, TELE_FRENO2_TEMPERATURA
@@ -544,7 +530,7 @@ WHERE TELE_FRENO2_NRO_SERIE IS NOT NULL AND
  TELE_FRENO2_GROSOR_PASTILLA IS NOT NULL AND
  TELE_FRENO2_POSICION IS NOT NULL AND
  TELE_FRENO2_TEMPERATURA IS NOT NULL
-GO
+
 
 INSERT INTO [MARCO_AND_FRIENDS].[Telemetria_Freno] ([num_serie_freno], [grosor_pastilla],[posicion_freno], [temperatura_freno])
 SELECT DISTINCT TELE_FRENO3_NRO_SERIE, TELE_FRENO3_GROSOR_PASTILLA, TELE_FRENO3_POSICION, TELE_FRENO3_TEMPERATURA
@@ -553,7 +539,7 @@ WHERE TELE_FRENO3_NRO_SERIE IS NOT NULL AND
  TELE_FRENO3_GROSOR_PASTILLA IS NOT NULL AND
  TELE_FRENO3_POSICION IS NOT NULL AND
  TELE_FRENO3_TEMPERATURA IS NOT NULL
-GO
+
 
 INSERT INTO [MARCO_AND_FRIENDS].[Telemetria_Freno] ([num_serie_freno], [grosor_pastilla],[posicion_freno], [temperatura_freno])
 SELECT DISTINCT TELE_FRENO4_NRO_SERIE, TELE_FRENO4_GROSOR_PASTILLA, TELE_FRENO4_POSICION, TELE_FRENO4_TEMPERATURA
@@ -562,7 +548,7 @@ WHERE TELE_FRENO4_NRO_SERIE IS NOT NULL AND
  TELE_FRENO4_GROSOR_PASTILLA IS NOT NULL AND
  TELE_FRENO4_POSICION IS NOT NULL AND
  TELE_FRENO4_TEMPERATURA IS NOT NULL
-GO
+
 
 -- Cambios Neumatico
 INSERT INTO [MARCO_AND_FRIENDS].[Cambio_Neumatico] ([num_serie_viejo], [num_serie_nuevo], [posicion])
@@ -604,7 +590,7 @@ FROM gd_esquema.Maestra
 WHERE NEUMATICO4_NRO_SERIE_VIEJO IS NOT NULL
 AND    NEUMATICO4_NRO_SERIE_NUEVO IS NOT NULL
 AND    NEUMATICO4_POSICION_VIEJO IS NOT NULL
-GO
+
 
 -- Parada Box
 INSERT INTO [MARCO_AND_FRIENDS].[Parada_Box]
@@ -641,7 +627,7 @@ N4.[num_serie_viejo] = M.NEUMATICO4_NRO_SERIE_VIEJO AND N4.[num_serie_nuevo] = M
 LEFT JOIN [MARCO_AND_FRIENDS].[Carrera] C ON
 C.[codigo_carrera] = M.CODIGO_CARRERA
 WHERE M.PARADA_BOX_VUELTA IS NOT NULL AND M.PARADA_BOX_TIEMPO IS NOT NULL
-GO
+
 
 -- Incidente 
 INSERT INTO [MARCO_AND_FRIENDS].[Incidente]
@@ -659,7 +645,7 @@ WHERE
 	M.INCIDENTE_TIEMPO IS NOT NULL AND
 	M.INCIDENTE_NUMERO_VUELTA IS NOT NULL
 GROUP BY M.CIRCUITO_CODIGO, M.CODIGO_SECTOR, M.INCIDENTE_BANDERA, M.INCIDENTE_TIPO, M.INCIDENTE_TIEMPO, M.INCIDENTE_NUMERO_VUELTA
-go
+
 
 INSERT INTO [MARCO_AND_FRIENDS].[Incidente_Auto]
 (
@@ -690,7 +676,7 @@ WHERE
     M.AUTO_NUMERO IS NOT NULL AND 
     M.CIRCUITO_CODIGO IS NOT NULL AND
     M.CODIGO_SECTOR IS NOT NULL
-GO
+
 
 -- Telemetria Auto
 INSERT INTO [MARCO_AND_FRIENDS].[Telemetria_Auto] (
@@ -754,5 +740,8 @@ INSERT INTO [MARCO_AND_FRIENDS].[Telemetria_Auto] (
 		LEFT JOIN [MARCO_AND_FRIENDS].[Telemetria_Neumatico] TN3 ON TN3.num_serie_neumatico = M.TELE_NEUMATICO3_NRO_SERIE AND TN3.profundidad_neumatico = M.TELE_NEUMATICO3_PROFUNDIDAD and TN3.temperatura_neumatico = M.TELE_NEUMATICO3_TEMPERATURA AND TN3.presion_neumatico = M.TELE_NEUMATICO3_PRESION AND TN3.posicion_neumatico = M.TELE_NEUMATICO3_POSICION
 		LEFT JOIN [MARCO_AND_FRIENDS].[Telemetria_Neumatico] TN4 ON TN4.num_serie_neumatico = M.TELE_NEUMATICO4_NRO_SERIE AND TN4.profundidad_neumatico = M.TELE_NEUMATICO4_PROFUNDIDAD and TN4.temperatura_neumatico = M.TELE_NEUMATICO4_TEMPERATURA AND TN4.presion_neumatico = M.TELE_NEUMATICO4_PRESION AND TN4.posicion_neumatico = M.TELE_NEUMATICO4_POSICION
 	WHERE M.TELE_AUTO_CODIGO IS NOT NULL
-GO
+
 /* Fin Inserts */
+END
+
+EXEC MARCO_AND_FRIENDS.MIGRAR_TABLA_MAESTRA;
