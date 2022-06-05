@@ -7,7 +7,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-/* Comienzo Drops de las tablas */
+/* Comienzo Drop de Tablas para limpiar por si la DB ya tenia algunas tablas sucias antes */
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[MARCO_AND_FRIENDS].[Telemetria_Auto]') AND type in (N'U'))
 DROP TABLE [MARCO_AND_FRIENDS].[Telemetria_Auto]
 GO
@@ -91,17 +91,17 @@ GO
 IF EXISTS (SELECT * FROM sys.schemas WHERE name = 'MARCO_AND_FRIENDS')
 DROP SCHEMA [MARCO_AND_FRIENDS]
 GO
-
 /* Fin Drops de las tablas */
 
 /*Comienzo Migracion */
 CREATE SCHEMA MARCO_AND_FRIENDS
 GO
 
+/* Procedure que realizara la migracion */
 CREATE PROCEDURE [MARCO_AND_FRIENDS].[MIGRAR_TABLA_MAESTRA] AS
 BEGIN
 
-/*Comienzo Creates de las tablas*/
+/* Comienzo Creates de todas las tablas*/
 CREATE TABLE [MARCO_AND_FRIENDS].[Circuito] (
     [codigo_circuito] int NOT NULL PRIMARY KEY,
     [nombre_circuito] nvarchar(255) NOT NULL,
@@ -277,10 +277,9 @@ CREATE TABLE [MARCO_AND_FRIENDS].[Telemetria_Auto] (
     [combustible_auto] decimal(18,2) NOT NULL,
 	CONSTRAINT FK_TELE_AUTO_A_SECTOR FOREIGN KEY([codigo_circuito],[codigo_sector]) REFERENCES [MARCO_AND_FRIENDS].[Sector]([codigo_circuito],[codigo_sector]),
 )
-
 /* FIN CREACION TABLAS */
-/* COMIENZO CARGA DE DATOS */
 
+/* COMIENZO CARGA DE DATOS A LAS TABLAS CREADAS */
 -- Motor
 INSERT INTO [MARCO_AND_FRIENDS].[Motor] ([num_serie_motor], [modelo_motor])
 SELECT DISTINCT TELE_MOTOR_NRO_SERIE, TELE_MOTOR_MODELO
@@ -331,7 +330,7 @@ WHERE
     TELE_CAJA_DESGASTE IS NOT NULL
 
 
--- Neumatico
+-- Neumaticos
 insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [tipo_neumatico])
 (	select distinct NEUMATICO1_NRO_SERIE_VIEJO, NEUMATICO1_TIPO_VIEJO
 	from gd_esquema.Maestra
@@ -394,7 +393,6 @@ insert into MARCO_AND_FRIENDS.Neumatico ([num_serie_neumatico], [tipo_neumatico]
 
 
 -- Telemetria Neumatico
-
 insert into [MARCO_AND_FRIENDS].[Telemetria_Neumatico]([num_serie_neumatico],[posicion_neumatico],[profundidad_neumatico],[temperatura_neumatico],[presion_neumatico])
 select distinct TELE_NEUMATICO1_NRO_SERIE, TELE_NEUMATICO1_POSICION, TELE_NEUMATICO1_PROFUNDIDAD, TELE_NEUMATICO1_TEMPERATURA, TELE_NEUMATICO1_PRESION from gd_esquema.Maestra
 where TELE_NEUMATICO1_NRO_SERIE is not null
@@ -463,7 +461,6 @@ WHERE
     CIRCUITO_PAIS	IS NOT NULL
 
 
-
 -- Carrera
 INSERT INTO [MARCO_AND_FRIENDS].[Carrera] ([codigo_carrera], [codigo_circuito], [fecha_carrera], [clima_carrera], [total_carrera], [cantidad_vueltas_carrera])
 SELECT DISTINCT CODIGO_CARRERA, CIRCUITO_CODIGO, CARRERA_FECHA, CARRERA_CLIMA, CARRERA_TOTAL_CARRERA, CARRERA_CANT_VUELTAS
@@ -474,7 +471,6 @@ WHERE
     CARRERA_CLIMA IS NOT NULL AND
     CARRERA_TOTAL_CARRERA IS NOT NULL AND
     CARRERA_CANT_VUELTAS IS NOT NULL
-
 
 
 -- Sector
@@ -494,20 +490,17 @@ FROM [gd_esquema].[Maestra]
 WHERE TELE_FRENO1_NRO_SERIE IS NOT NULL AND
 TELE_FRENO1_TAMANIO_DISCO IS NOT NULL
 
-
 INSERT INTO [MARCO_AND_FRIENDS].[Freno] ([num_serie_freno], [tamanio_disco_freno])
 SELECT DISTINCT TELE_FRENO2_NRO_SERIE, TELE_FRENO2_TAMANIO_DISCO
 FROM [gd_esquema].[Maestra]
 WHERE TELE_FRENO2_NRO_SERIE IS NOT NULL AND
 TELE_FRENO2_TAMANIO_DISCO IS NOT NULL
 
-
 INSERT INTO [MARCO_AND_FRIENDS].[Freno] ([num_serie_freno], [tamanio_disco_freno])
 SELECT DISTINCT TELE_FRENO3_NRO_SERIE, TELE_FRENO3_TAMANIO_DISCO
 FROM [gd_esquema].[Maestra]
 WHERE TELE_FRENO3_NRO_SERIE IS NOT NULL AND
 TELE_FRENO3_TAMANIO_DISCO IS NOT NULL
-
 
 INSERT INTO [MARCO_AND_FRIENDS].[Freno] ([num_serie_freno], [tamanio_disco_freno])
 SELECT DISTINCT TELE_FRENO4_NRO_SERIE, TELE_FRENO4_TAMANIO_DISCO
@@ -525,7 +518,6 @@ WHERE TELE_FRENO1_NRO_SERIE IS NOT NULL AND
  TELE_FRENO1_POSICION IS NOT NULL AND
  TELE_FRENO1_TEMPERATURA IS NOT NULL
 
-
 INSERT INTO [MARCO_AND_FRIENDS].[Telemetria_Freno] ([num_serie_freno], [grosor_pastilla],[posicion_freno], [temperatura_freno])
 SELECT DISTINCT TELE_FRENO2_NRO_SERIE, TELE_FRENO2_GROSOR_PASTILLA, TELE_FRENO2_POSICION, TELE_FRENO2_TEMPERATURA
 FROM [gd_esquema].[Maestra]
@@ -534,7 +526,6 @@ WHERE TELE_FRENO2_NRO_SERIE IS NOT NULL AND
  TELE_FRENO2_POSICION IS NOT NULL AND
  TELE_FRENO2_TEMPERATURA IS NOT NULL
 
-
 INSERT INTO [MARCO_AND_FRIENDS].[Telemetria_Freno] ([num_serie_freno], [grosor_pastilla],[posicion_freno], [temperatura_freno])
 SELECT DISTINCT TELE_FRENO3_NRO_SERIE, TELE_FRENO3_GROSOR_PASTILLA, TELE_FRENO3_POSICION, TELE_FRENO3_TEMPERATURA
 FROM [gd_esquema].[Maestra]
@@ -542,7 +533,6 @@ WHERE TELE_FRENO3_NRO_SERIE IS NOT NULL AND
  TELE_FRENO3_GROSOR_PASTILLA IS NOT NULL AND
  TELE_FRENO3_POSICION IS NOT NULL AND
  TELE_FRENO3_TEMPERATURA IS NOT NULL
-
 
 INSERT INTO [MARCO_AND_FRIENDS].[Telemetria_Freno] ([num_serie_freno], [grosor_pastilla],[posicion_freno], [temperatura_freno])
 SELECT DISTINCT TELE_FRENO4_NRO_SERIE, TELE_FRENO4_GROSOR_PASTILLA, TELE_FRENO4_POSICION, TELE_FRENO4_TEMPERATURA
@@ -648,7 +638,6 @@ WHERE
 	M.INCIDENTE_TIEMPO IS NOT NULL AND
 	M.INCIDENTE_NUMERO_VUELTA IS NOT NULL
 GROUP BY M.CIRCUITO_CODIGO, M.CODIGO_SECTOR, M.INCIDENTE_BANDERA, M.INCIDENTE_TIPO, M.INCIDENTE_TIEMPO, M.INCIDENTE_NUMERO_VUELTA
-
 
 INSERT INTO [MARCO_AND_FRIENDS].[Incidente_Auto]
 (
