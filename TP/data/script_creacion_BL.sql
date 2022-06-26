@@ -336,10 +336,10 @@ GO
 
 CREATE FUNCTION [MARCO_AND_FRIENDS].[DESGASTE_MOTOR] (@cod_auto int, @cod_circuito int, @vuelta int) RETURNS decimal(18,6) AS
     BEGIN
-        DECLARE @RETURN_VALUE decimal(18,6)
+        DECLARE @RETURN_VALUE decimal(18,6);
         DECLARE @POTENCIA_MAX decimal(18,6);
         DECLARE @POTENCIA_MIN decimal(18,6);
-        SELECT @POTENCIA_MAX = MAX(potencia_motor), @POTENCIA_MIN = MIN(potencia_motor) FROM MARCO_AND_FRIENDS.BI_Telemetria
+        SELECT @POTENCIA_MAX = MAX(potencia_motor), @POTENCIA_MIN = MIN(potencia_motor) FROM MARCO_AND_FRIENDS.BI_Telemetria T WHERE T.codigo_auto = @cod_auto and T.codigo_circuito = @cod_circuito and T.numero_vuelta = @vuelta;
         SET @RETURN_VALUE = @POTENCIA_MAX - @POTENCIA_MIN
         RETURN @RETURN_VALUE
     END
