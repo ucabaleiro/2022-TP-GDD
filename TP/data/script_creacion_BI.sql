@@ -623,12 +623,16 @@ GO
 
 -- Promedio de incidentes que presenta cada escudería por año en los distintos tipo de sectores. 
 CREATE VIEW [MARCO_AND_FRIENDS].[BI_PROMEDIO_INCIDENTES_ESCUDERIA_POR_ANIO_POR_SECTOR] AS
-    SELECT E.nombre_escuderia, F.anio, S.descripcion, AVG(cantidad_incidentes) as [Promedio de incidentes en año]
+    SELECT escuderia, sector, AVG(incidentes) as [Promedio de incidentes en año]
+    FROM (
+    SELECT E.nombre_escuderia as escuderia, F.anio as anio, S.descripcion as sector, SUM(cantidad_incidentes) as [incidentes]
     FROM MARCO_AND_FRIENDS.BI_Incidente
     JOIN MARCO_AND_FRIENDS.BI_Escuderia E ON E.codigo_escuderia = BI_Incidente.codigo_escuderia
     JOIN MARCO_AND_FRIENDS.BI_Tipo_Sector S ON S.codigo_tipo_sector = BI_Incidente.tipo_sector
     JOIN MARCO_AND_FRIENDS.BI_Tiempo F ON F.id_tiempo = BI_Incidente.fecha_incidente
     GROUP BY E.nombre_escuderia, F.anio, S.descripcion
+    ) AS incidentesPorAnio
+    GROUP BY escuderia, sector
 GO
 
 -- Mejor tiempo de vuelta de cada escudería por circuito por año. 
