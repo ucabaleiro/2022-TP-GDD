@@ -665,8 +665,7 @@ GO
 CREATE VIEW [MARCO_AND_FRIENDS].[BI_CIRCUITOS_CON_MAYOR_CONSUMO_DE_COMBUSTIBLE_PROMEDIO] AS
     SELECT TOP 3
         SS.cod_circuito,
-        SS.nombre_circuito,
-        AVG(SS.consumoPromedioCircuitoIndividual) AS PROMEDIO_CONSUMO_HISTORICO
+        SS.nombre_circuito
     FROM (
         SELECT  T.fecha_telemetria,
                 T.codigo_circuito as cod_circuito, 
