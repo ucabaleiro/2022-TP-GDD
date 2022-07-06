@@ -186,7 +186,7 @@ GO
 
 /* Create Hechos */
 CREATE TABLE [MARCO_AND_FRIENDS].[BI_Incidente] (
-    [fecha_incidente] int NOT NULL,
+    [cuatri_incidente] int NOT NULL,
     [codigo_circuito] int NOT NULL,
     [tipo_sector] int NOT NULL,
     [codigo_escuderia] int NOT NULL,
@@ -195,12 +195,12 @@ CREATE TABLE [MARCO_AND_FRIENDS].[BI_Incidente] (
     [tipo_incidente] int NOT NULL,
     [cantidad_incidentes] int NOT NULL,
 
-    CONSTRAINT PK_BI_INCIDENTE PRIMARY KEY (fecha_incidente, codigo_circuito, tipo_sector, codigo_escuderia, codigo_piloto, codigo_auto, tipo_incidente)
+    CONSTRAINT PK_BI_INCIDENTE PRIMARY KEY (cuatri_incidente, codigo_circuito, tipo_sector, codigo_escuderia, codigo_piloto, codigo_auto, tipo_incidente)
 )
 GO
 
 CREATE TABLE [MARCO_AND_FRIENDS].[BI_Parada] (
-    [fecha_parada] int NOT NULL,
+    [cuatri_parada] int NOT NULL,
     [codigo_circuito] int NOT NULL,
     [codigo_escuderia] int NOT NULL,
     [codigo_piloto] int NOT NULL,
@@ -208,12 +208,12 @@ CREATE TABLE [MARCO_AND_FRIENDS].[BI_Parada] (
     [tiempo_total_parado] decimal(18,2) NOT NULL,
     [cantidad_paradas] int NOT NULL,
 
-    CONSTRAINT PK_BI_PARADA PRIMARY KEY (fecha_parada, codigo_circuito, codigo_escuderia, codigo_piloto, codigo_auto)
+    CONSTRAINT PK_BI_PARADA PRIMARY KEY (cuatri_parada, codigo_circuito, codigo_escuderia, codigo_piloto, codigo_auto)
 )
 GO
 
 CREATE TABLE [MARCO_AND_FRIENDS].[BI_Telemetria] (
-    [fecha_telemetria] int NOT NULL,
+    [cuatri_telemetria] int NOT NULL,
     [codigo_circuito] int NOT NULL,
     [codigo_escuderia] int NOT NULL,
     [codigo_piloto] int NOT NULL,
@@ -234,7 +234,7 @@ CREATE TABLE [MARCO_AND_FRIENDS].[BI_Telemetria] (
     [desgaste_neumatico2_promedio] decimal(18,6) NOT NULL,
     [desgaste_neumatico3_promedio] decimal(18,6) NOT NULL,
     [desgaste_neumatico4_promedio] decimal(18,6) NOT NULL,
-    CONSTRAINT PK_BI_TELEMETRIA PRIMARY KEY (fecha_telemetria, codigo_circuito, codigo_escuderia, codigo_piloto, codigo_auto, numero_vuelta, tipo_sector, tipo_neumatico)
+    CONSTRAINT PK_BI_TELEMETRIA PRIMARY KEY (cuatri_telemetria, codigo_circuito, codigo_escuderia, codigo_piloto, codigo_auto, numero_vuelta, tipo_sector, tipo_neumatico)
 )
 GO
 
@@ -326,7 +326,7 @@ GO
 
 /* Carga de Hechos BI */
 INSERT INTO [MARCO_AND_FRIENDS].[BI_Parada](
-    [fecha_parada],
+    [cuatri_parada],
     [codigo_circuito],
     [codigo_escuderia],
     [codigo_piloto],
@@ -353,7 +353,7 @@ GROUP BY [MARCO_AND_FRIENDS].[GET_PK_TIEMPO](C.fecha_carrera),
 GO
 
 INSERT INTO [MARCO_AND_FRIENDS].[BI_Incidente](
-    [fecha_incidente],
+    [cuatri_incidente],
     [codigo_circuito],
     [tipo_sector],
     [codigo_escuderia],
@@ -514,7 +514,7 @@ AS (
              [MARCO_AND_FRIENDS].[GET_PK_TIPO_SECTOR](cod_sector), tipo_neumatico, tiempo_vuelta 
 )
 INSERT INTO [MARCO_AND_FRIENDS].[BI_Telemetria](
-    [fecha_telemetria],
+    [cuatri_telemetria],
     [codigo_circuito],
     [codigo_escuderia],
     [codigo_piloto],
@@ -589,7 +589,7 @@ CREATE VIEW [MARCO_AND_FRIENDS].[BI_CANTIDAD_PARADAS_POR_ESCUDERIA_POR_CIRCUITO]
     FROM MARCO_AND_FRIENDS.BI_Parada PB
     JOIN MARCO_AND_FRIENDS.BI_Circuito C ON C.codigo_circuito = PB.codigo_circuito
     JOIN MARCO_AND_FRIENDS.BI_Escuderia E ON E.codigo_escuderia = PB.codigo_escuderia
-	JOIN MARCO_AND_FRIENDS.BI_Tiempo F ON F.id_tiempo = PB.fecha_parada
+	JOIN MARCO_AND_FRIENDS.BI_Tiempo F ON F.id_tiempo = PB.cuatri_parada
     GROUP BY C.nombre_circuito, E.nombre_escuderia, F.anio
 GO
 
@@ -601,7 +601,7 @@ CREATE VIEW [MARCO_AND_FRIENDS].[BI_TIEMPO_PROMEDIO_PARADAS_POR_CUATRIMESTRE] AS
             SUM(tiempo_total_parado) / SUM(cantidad_paradas) as [Tiempo promedio en paradas del cuatrimestre]
     FROM    MARCO_AND_FRIENDS.BI_Parada P
     JOIN MARCO_AND_FRIENDS.BI_Escuderia E ON E.codigo_escuderia = P.codigo_escuderia
-    JOIN MARCO_AND_FRIENDS.BI_Tiempo F ON F.id_tiempo = P.fecha_parada
+    JOIN MARCO_AND_FRIENDS.BI_Tiempo F ON F.id_tiempo = P.cuatri_parada
     GROUP BY E.nombre_escuderia, F.anio, F.cuatrimestre
 GO
 
@@ -610,11 +610,11 @@ CREATE VIEW [MARCO_AND_FRIENDS].[BI_TOP_3_CIRCUITOS_PELIGROSOS] AS
     SELECT F.anio, C.nombre_circuito
     FROM MARCO_AND_FRIENDS.BI_Incidente I
     JOIN MARCO_AND_FRIENDS.BI_Circuito C ON I.codigo_circuito = C.codigo_circuito
-    JOIN MARCO_AND_FRIENDS.BI_Tiempo F ON F.id_tiempo = I.fecha_incidente
+    JOIN MARCO_AND_FRIENDS.BI_Tiempo F ON F.id_tiempo = I.cuatri_incidente
     WHERE I.codigo_circuito IN (
         SELECT TOP 3 I1.codigo_circuito
         FROM MARCO_AND_FRIENDS.BI_Incidente I1
-        JOIN MARCO_AND_FRIENDS.BI_Tiempo F1 ON F1.id_tiempo = I1.fecha_incidente AND F1.anio =	F.anio
+        JOIN MARCO_AND_FRIENDS.BI_Tiempo F1 ON F1.id_tiempo = I1.cuatri_incidente AND F1.anio =	F.anio
         GROUP BY F1.anio, I1.codigo_circuito
         ORDER BY SUM(cantidad_incidentes) DESC
     )
@@ -629,7 +629,7 @@ CREATE VIEW [MARCO_AND_FRIENDS].[BI_PROMEDIO_INCIDENTES_ESCUDERIA_POR_ANIO_POR_S
     FROM MARCO_AND_FRIENDS.BI_Incidente
     JOIN MARCO_AND_FRIENDS.BI_Escuderia E ON E.codigo_escuderia = BI_Incidente.codigo_escuderia
     JOIN MARCO_AND_FRIENDS.BI_Tipo_Sector S ON S.codigo_tipo_sector = BI_Incidente.tipo_sector
-    JOIN MARCO_AND_FRIENDS.BI_Tiempo F ON F.id_tiempo = BI_Incidente.fecha_incidente
+    JOIN MARCO_AND_FRIENDS.BI_Tiempo F ON F.id_tiempo = BI_Incidente.cuatri_incidente
     GROUP BY E.nombre_escuderia, F.anio, S.descripcion
     ) AS incidentesPorAnio
     GROUP BY escuderia, sector
@@ -642,7 +642,7 @@ CREATE VIEW [MARCO_AND_FRIENDS].[BI_MEJORES_TIEMPOS_ESCUDERIAS] AS
     FROM MARCO_AND_FRIENDS.BI_Telemetria
     JOIN MARCO_AND_FRIENDS.BI_Escuderia E ON E.codigo_escuderia = BI_Telemetria.codigo_escuderia
     JOIN MARCO_AND_FRIENDS.BI_Circuito C ON C.codigo_circuito = BI_Telemetria.codigo_circuito
-    JOIN MARCO_AND_FRIENDS.BI_Tiempo F ON F.id_tiempo = BI_Telemetria.fecha_telemetria
+    JOIN MARCO_AND_FRIENDS.BI_Tiempo F ON F.id_tiempo = BI_Telemetria.cuatri_telemetria
     GROUP BY E.nombre_escuderia, C.nombre_circuito, F.anio
 GO
 
@@ -667,7 +667,7 @@ CREATE VIEW [MARCO_AND_FRIENDS].[BI_CIRCUITOS_CON_MAYOR_CONSUMO_DE_COMBUSTIBLE_P
         SS.cod_circuito,
         SS.nombre_circuito
     FROM (
-        SELECT  T.fecha_telemetria,
+        SELECT  T.cuatri_telemetria,
                 T.codigo_circuito as cod_circuito, 
                 C.nombre_circuito as nombre_circuito,
                 T.codigo_escuderia,
@@ -676,7 +676,7 @@ CREATE VIEW [MARCO_AND_FRIENDS].[BI_CIRCUITOS_CON_MAYOR_CONSUMO_DE_COMBUSTIBLE_P
                 SUM(consumo_combustible_promedio) AS consumoPromedioCircuitoIndividual
         FROM MARCO_AND_FRIENDS.BI_Telemetria T
         JOIN MARCO_AND_FRIENDS.BI_Circuito C ON C.codigo_circuito = T.codigo_circuito
-        GROUP BY T.fecha_telemetria,
+        GROUP BY T.cuatri_telemetria,
                 T.codigo_circuito, 
                 C.nombre_circuito,
                 T.codigo_escuderia,
@@ -709,7 +709,7 @@ CREATE VIEW [MARCO_AND_FRIENDS].[BI_DESGASTE_PROMEDIO_AUTO_POR_VUELTA_POR_CIRCUI
         SELECT 
             T.codigo_circuito,
             C.nombre_circuito,
-            T.fecha_telemetria,
+            T.cuatri_telemetria,
             T.codigo_auto,
             T.codigo_escuderia,
             T.codigo_piloto,
@@ -728,7 +728,7 @@ CREATE VIEW [MARCO_AND_FRIENDS].[BI_DESGASTE_PROMEDIO_AUTO_POR_VUELTA_POR_CIRCUI
         JOIN MARCO_AND_FRIENDS.BI_Circuito C ON T.codigo_circuito = C.codigo_circuito
         GROUP BY    T.codigo_circuito,
                     C.nombre_circuito,
-                    T.fecha_telemetria,
+                    T.cuatri_telemetria,
                     T.codigo_auto,
                     T.codigo_escuderia,
                     T.codigo_piloto,
