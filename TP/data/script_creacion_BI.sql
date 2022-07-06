@@ -614,7 +614,7 @@ CREATE VIEW [MARCO_AND_FRIENDS].[BI_TOP_3_CIRCUITOS_PELIGROSOS] AS
     WHERE I.codigo_circuito IN (
         SELECT TOP 3 I1.codigo_circuito
         FROM MARCO_AND_FRIENDS.BI_Incidente I1
-        JOIN MARCO_AND_FRIENDS.BI_Tiempo F1 ON F1.id_tiempo = I1.fecha_incidente
+        JOIN MARCO_AND_FRIENDS.BI_Tiempo F1 ON F1.id_tiempo = I1.fecha_incidente AND F1.anio =	F.anio
         GROUP BY F1.anio, I1.codigo_circuito
         ORDER BY SUM(cantidad_incidentes) DESC
     )
